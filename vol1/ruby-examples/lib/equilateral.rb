@@ -1,4 +1,5 @@
 class Equilateral
+  require_relative 'distance'
   attr_accessor :classes, :low, :high, :class_matrix
 
   def initialize(classes, low, high)
@@ -44,22 +45,13 @@ class Equilateral
     current_min = Float::INFINITY
     result = -1
     @class_matrix.each_with_index do |vector, i|
-      dist = euclidean_distance(point, vector)
+      dist = Distance.euclidean(point, vector)
       if dist < current_min
         current_min = dist
         result = i
       end
     end
     return @classes[i]
-  end
-
-  def euclidean_distance(vector1, vector2)
-    sum = 0
-    vector1.zip(vector2).each do |v1, v2|
-      component = (v1 - v2)**2
-      sum += component
-    end
-    Math.sqrt(sum)
   end
 
 end
