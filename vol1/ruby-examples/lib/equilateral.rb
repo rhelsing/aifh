@@ -51,7 +51,7 @@ class Equilateral
         result = i
       end
     end
-    return @classes[i]
+    return @classes[result]
   end
 
 end

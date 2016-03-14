@@ -1,5 +1,5 @@
 class Normalize
-  attr_accessor :column_map, :headers, :result_set
+  attr_accessor :column_map, :headers, :result_set, :eq, :original_data
   require 'csv'
   require_relative 'equilateral'
 
@@ -7,6 +7,7 @@ class Normalize
     @column_map = []
     CSV.foreach(data_file, headers: true) do |row|
       @column_map << row.to_hash if row.size > 0
+      @original_data = @column_map.map{|x| x.values}
     end
     @headers = column_map.first.keys
     @result_set = []
@@ -26,8 +27,8 @@ class Normalize
         #find classes
         classes = @column_map.map{|item| item[header]}.uniq
         # Normalize classes with equilateral encoding
-        eqs = Equilateral.new(classes, normalized_low, normalized_high)
-        @column_map.each{|item| item[header] = eqs.encode(item[header]) }
+        @eq = Equilateral.new(classes, normalized_low, normalized_high)
+        @column_map.each{|item| item[header] = @eq.encode(item[header]) }
       end
     end
     #fill in result set from column map
