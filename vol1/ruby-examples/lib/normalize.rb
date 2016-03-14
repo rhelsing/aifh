@@ -1,4 +1,4 @@
-class Normalizer
+class Normalize
   attr_accessor :column_map, :headers, :result_set
   require 'csv'
   require_relative 'equilateral'
@@ -26,11 +26,29 @@ class Normalizer
         #find classes
         classes = @column_map.map{|item| item[header]}.uniq
         # Normalize classes with equilateral encoding
-        eq = Equilateral.new(classes, normalized_low, normalized_high)
-        #TODO: build equilateral encoding class
+        eqs = Equilateral.new(classes, normalized_low, normalized_high)
+        @column_map.each{|item| item[header] = eqs.encode(item[header]) }
       end
     end
     #fill in result set from column map
+    populate_result
+  end
+
+  def populate_result
+    @result_set = []
+    @column_map.each do |i|
+      row = []
+      i.values.each do |j|
+        if j.kind_of?(Array)
+          j.each do |k|
+            row << k
+          end
+        else
+          row << j
+        end
+      end
+      @result_set << row
+    end
   end
 
   #TODO: additional functionality from normalize.py .. denormalize etc, generalize other types of normalization
